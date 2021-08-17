@@ -21,16 +21,10 @@ GROUP BY 1, 2;
 SELECT
 	YEAR(website_sessions.created_at) AS year,
 	MONTH(website_sessions.created_at) AS month,
-    COUNT(DISTINCT CASE WHEN utm_campaign = 'nonbrand' 
-						THEN website_sessions.website_session_id ELSE NULL END) 
-								AS nonbrand_sessions,
-    COUNT(DISTINCT CASE WHEN utm_campaign = 'nonbrand' 
-						THEN orders.order_id ELSE NULL END) AS nonbrand_orders,
-    COUNT(DISTINCT CASE WHEN utm_campaign = 'brand' 
-						THEN website_sessions.website_session_id ELSE NULL END)
-								AS brand_sessions,
-    COUNT(DISTINCT CASE WHEN utm_campaign = 'brand' 
-						THEN orders.order_id ELSE NULL END) AS brand_orders
+    COUNT(DISTINCT CASE WHEN utm_campaign = 'nonbrand' THEN website_sessions.website_session_id ELSE NULL END) AS nonbrand_sessions,
+    COUNT(DISTINCT CASE WHEN utm_campaign = 'nonbrand' THEN orders.order_id ELSE NULL END) AS nonbrand_orders,
+    COUNT(DISTINCT CASE WHEN utm_campaign = 'brand' THEN website_sessions.website_session_id ELSE NULL END) AS brand_sessions,
+    COUNT(DISTINCT CASE WHEN utm_campaign = 'brand' THEN orders.order_id ELSE NULL END) AS brand_orders
 FROM website_sessions
 	LEFT JOIN orders
 		ON website_sessions.website_session_id = orders.website_session_id
@@ -46,22 +40,16 @@ GROUP BY 1,2
 SELECT
 	YEAR(website_sessions.created_at) AS YEAR,
     MONTH(website_sessions.created_at) AS MONTH,
-		COUNT(CASE WHEN device_type = 'desktop' 
-				THEN website_sessions.website_session_id ELSE NULL END) 
-					AS desktop_sessions,
-    COUNT(CASE WHEN device_type = 'desktop' 
-				THEN orders.order_id ELSE NULL END) AS desktop_orders,
-    COUNT(CASE WHEN device_type = 'mobile' 
-				THEN website_sessions.website_session_id ELSE NULL END) 
-					AS mobile_sessions,
-    COUNT(CASE WHEN device_type = 'mobile' 
-				THEN orders.order_id ELSE NULL END) AS mobile_orders
+	COUNT(CASE WHEN device_type = 'desktop' THEN website_sessions.website_session_id ELSE NULL END) AS desktop_sessions,
+    COUNT(CASE WHEN device_type = 'desktop' THEN orders.order_id ELSE NULL END) AS desktop_orders,
+    COUNT(CASE WHEN device_type = 'mobile' THEN website_sessions.website_session_id ELSE NULL END) AS mobile_sessions,
+    COUNT(CASE WHEN device_type = 'mobile' THEN orders.order_id ELSE NULL END) AS mobile_orders
 FROM website_sessions
 	LEFT JOIN orders
 		ON website_sessions.website_session_id = orders.website_session_id
 WHERE utm_source = 'gsearch' 
-			AND utm_campaign = 'nonbrand' 
-			AND website_sessions.created_at < '2012-11-27'
+		AND utm_campaign = 'nonbrand' 
+		AND website_sessions.created_at < '2012-11-27'
 GROUP BY 1, 2
 
 
@@ -81,20 +69,12 @@ WHERE created_at < '2012-11-27'
 SELECT 
 	YEAR(website_sessions.created_at) as year,
 	MONTH(website_sessions.created_at) as month,
-    COUNT(DISTINCT CASE WHEN utm_source = 'gsearch' 
-				THEN website_sessions.website_session_id ELSE NULL END) 
-					AS gsearch_paid_sessions,
-    COUNT(DISTINCT CASE WHEN utm_source = 'bsearch' 
-				THEN website_sessions.website_session_id ELSE NULL END) 
-					AS bsearch_paid_sessions,
-    COUNT(DISTINCT CASE WHEN utm_source IS NULL AND http_referer IS NOT NULL 
-				THEN website_sessions.website_session_id ELSE NULL END) 
-					AS organic_search_sessions,
-					-- it doesn't have paid tracking but it does have a	referring domain
-					-- from the search engine. -> organic search.
-    COUNT(DISTINCT CASE WHEN utm_source IS NULL AND http_referer IS NULL 
-				THEN website_sessions.website_session_id ELSE NULL END) 
-					AS direct_type_in_sessions
+    COUNT(DISTINCT CASE WHEN utm_source = 'gsearch' THEN website_sessions.website_session_id ELSE NULL END) AS gsearch_paid_sessions,
+    COUNT(DISTINCT CASE WHEN utm_source = 'bsearch' THEN website_sessions.website_session_id ELSE NULL END) AS bsearch_paid_sessions,
+    COUNT(DISTINCT CASE WHEN utm_source IS NULL AND http_referer IS NOT NULL THEN website_sessions.website_session_id ELSE NULL END) AS organic_search_sessions,
+		-- it doesn't have paid tracking but it does have a	referring domain
+		-- from the search engine. -> organic search.
+    COUNT(DISTINCT CASE WHEN utm_source IS NULL AND http_referer IS NULL THEN website_sessions.website_session_id ELSE NULL END) AS direct_type_in_sessions
 FROM website_sessions
 	LEFT JOIN orders
 		ON website_sessions.website_session_id = orders.website_session_id
@@ -112,7 +92,7 @@ GROUP BY 1, 2;
     COUNT(DISTINCT website_sessions.website_session_id) AS sessions,
     COUNT(DISTINCT orders.order_id) AS ordrs,
     COUNT(DISTINCT orders.order_id) / 
-			COUNT(DISTINCT website_sessions.website_session_id) AS conversion_rate
+	COUNT(DISTINCT website_sessions.website_session_id) AS conversion_rate
 FROM website_sessions
 	Left JOIN orders
 		ON website_sessions.website_session_id = orders.website_session_id
@@ -134,8 +114,7 @@ SELECT
     MIN(website_pageviews.website_pageview_id) AS min_pageview_id
 FROM website_pageviews
 	JOIN website_sessions
-		ON website_pageviews.website_session_id = 
-				website_sessions.website_session_id
+		ON website_pageviews.website_session_id = website_sessions.website_session_id
 WHERE website_pageviews.website_pageview_id >= '23504'
 	AND website_sessions.created_at < '2012-07-28'
 	AND utm_source = 'gsearch'
@@ -150,8 +129,7 @@ SELECT
     pageview_url AS landing_page
 FROM first_test_pageview
 	LEFT JOIN website_pageviews
-		ON first_test_pageview.min_pageview_id = 
-				website_pageviews.website_pageview_id
+		ON first_test_pageview.min_pageview_id = website_pageviews.website_pageview_id
 WHERE pageview_url IN ('/home', '/lander-1');
 -- bring in the landing page for each session but restricting to home/lander-1
 
@@ -177,12 +155,10 @@ GROUP BY 1;
 
 
 SELECT 
-	MAX(website_sessions.website_session_id) AS 
-			most_recent_gsearch_nonbrand_home_session
+	MAX(website_sessions.website_session_id) AS most_recent_gsearch_nonbrand_home_session
 FROM website_sessions
 	LEFT JOIN website_pageviews
-		ON website_sessions.website_session_id = 
-			website_pageviews.website_session_id
+		ON website_sessions.website_session_id = website_pageviews.website_session_id
 WHERE utm_source = 'gsearch'
 	AND utm_campaign = 'nonbrand'
     AND pageview_url = '/home'
@@ -216,29 +192,26 @@ SELECT
     MAX(billing_page) AS billing_made_it,
     MAX(thankyou_page) AS thankyou_made_it
 FROM (
-		SELECT
-			website_sessions.website_session_id,
-			website_pageviews.pageview_url,
-			-- website_sessions.created_at,
-			CASE WHEN pageview_url = '/home' THEN 1 ELSE 0 END AS homepage,
-			CASE WHEN pageview_url = '/lander-1' THEN 1 ELSE 0 END AS custom_lander,
-			CASE WHEN pageview_url = '/products' THEN 1 ELSE 0 END AS products_page,
-			CASE WHEN pageview_url = '/the-original-mr-fuzzy' THEN 1 ELSE 0 END
-				AS mrfuzzy_page,
-			CASE WHEN pageview_url = '/cart' THEN 1 ELSE 0 END AS cart_page,
-			CASE WHEN pageview_url = '/shipping' THEN 1 ELSE 0 END AS shipping_page,
-			CASE WHEN pageview_url = '/billing' THEN 1 ELSE 0 END AS billing_page,
-			CASE WHEN pageview_url = '/thank-you-for-your-order' THEN 1 ELSE 0 END 
-				AS thankyou_page
-		FROM website_sessions
-			LEFT JOIN website_pageviews
-				ON website_sessions.website_session_id = 
-						website_pageviews.website_session_id
-		WHERE website_sessions.utm_source = 'gsearch'
-			AND website_sessions.utm_campaign = 'nonbrand'
-			AND website_sessions.created_at > '2012-06-19'
-			AND website_sessions.created_at < '2012-07-28'
-		ORDER BY website_sessions.website_session_id, website_sessions.created_at
+	SELECT
+		website_sessions.website_session_id,
+		website_pageviews.pageview_url,
+		-- website_sessions.created_at,
+		CASE WHEN pageview_url = '/home' THEN 1 ELSE 0 END AS homepage,
+		CASE WHEN pageview_url = '/lander-1' THEN 1 ELSE 0 END AS custom_lander,
+		CASE WHEN pageview_url = '/products' THEN 1 ELSE 0 END AS products_page,
+		CASE WHEN pageview_url = '/the-original-mr-fuzzy' THEN 1 ELSE 0 END AS mrfuzzy_page,
+		CASE WHEN pageview_url = '/cart' THEN 1 ELSE 0 END AS cart_page,
+		CASE WHEN pageview_url = '/shipping' THEN 1 ELSE 0 END AS shipping_page,
+		CASE WHEN pageview_url = '/billing' THEN 1 ELSE 0 END AS billing_page,
+		CASE WHEN pageview_url = '/thank-you-for-your-order' THEN 1 ELSE 0 END AS thankyou_page
+	FROM website_sessions
+		LEFT JOIN website_pageviews
+			ON website_sessions.website_session_id = website_pageviews.website_session_id
+	WHERE website_sessions.utm_source = 'gsearch'
+		AND website_sessions.utm_campaign = 'nonbrand'
+		AND website_sessions.created_at > '2012-06-19'
+		AND website_sessions.created_at < '2012-07-28'
+	ORDER BY website_sessions.website_session_id, website_sessions.created_at
  ) AS pageview_level -- a flag say where this is the homepage, custom_lander, ...
  
 GROUP BY website_session_id;
@@ -250,30 +223,12 @@ SELECT
 		WHEN saw_custom_lander = 1 THEN 'saw_custom_lander'
         ELSE 'uh oh ... check logic'
 	END AS segment,
-    COUNT(DISTINCT CASE WHEN product_made_it = 1 THEN website_session_id 
-				ELSE NULL END) / COUNT(DISTINCT website_session_id) 
-					AS lander_click_rt,
-
-    COUNT(DISTINCT CASE WHEN mrfuzzy_made_it = 1 THEN website_session_id 
-				ELSE NULL END) / COUNT(DISTINCT CASE WHEN product_made_it = 1 
-					THEN website_session_id ELSE NULL END) AS products_click_rt,
-
-    COUNT(DISTINCT CASE WHEN cart_made_it = 1 THEN website_session_id 
-				ELSE NULL END) / COUNT(DISTINCT CASE WHEN mrfuzzy_made_it = 1 
-					THEN website_session_id ELSE NULL END) AS mrfuzzy_click_rt,
-
-    COUNT(DISTINCT CASE WHEN shipping_made_it = 1 THEN website_session_id 
-				ELSE NULL END) / COUNT(DISTINCT CASE WHEN cart_made_it = 1 
-					THEN website_session_id ELSE NULL END) AS cart_click_rt,
-
-    COUNT(DISTINCT CASE WHEN billing_made_it = 1 THEN website_session_id
-				ELSE NULL END) / COUNT(DISTINCT CASE WHEN shipping_made_it = 1 
-					THEN website_session_id ELSE NULL END) AS shipping_click_rt,
-
-    COUNT(DISTINCT CASE WHEN thankyou_made_it = 1 THEN website_session_id 
-				ELSE NULL END) / COUNT(DISTINCT CASE WHEN billing_made_it = 1 
-					THEN website_session_id ELSE NULL END) AS billing_click_rt
-    
+    COUNT(DISTINCT CASE WHEN product_made_it = 1 THEN website_session_id ELSE NULL END) / COUNT(DISTINCT website_session_id) AS lander_click_rt,
+    COUNT(DISTINCT CASE WHEN mrfuzzy_made_it = 1 THEN website_session_id ELSE NULL END) / COUNT(DISTINCT CASE WHEN product_made_it = 1 THEN website_session_id ELSE NULL END) AS products_click_rt,
+    COUNT(DISTINCT CASE WHEN cart_made_it = 1 THEN website_session_id ELSE NULL END) / COUNT(DISTINCT CASE WHEN mrfuzzy_made_it = 1 THEN website_session_id ELSE NULL END) AS mrfuzzy_click_rt,
+    COUNT(DISTINCT CASE WHEN shipping_made_it = 1 THEN website_session_id ELSE NULL END) / COUNT(DISTINCT CASE WHEN cart_made_it = 1 THEN website_session_id ELSE NULL END) AS cart_click_rt,
+    COUNT(DISTINCT CASE WHEN billing_made_it = 1 THEN website_session_idELSE NULL END) / COUNT(DISTINCT CASE WHEN shipping_made_it = 1 THEN website_session_id ELSE NULL END) AS shipping_click_rt,
+    COUNT(DISTINCT CASE WHEN thankyou_made_it = 1 THEN website_session_id ELSE NULL END) / COUNT(DISTINCT CASE WHEN billing_made_it = 1 THEN website_session_id ELSE NULL END) AS billing_click_rt
 FROM session_level_made_it_flagged
 GROUP BY 1;
 
@@ -287,8 +242,7 @@ GROUP BY 1;
 SELECT
 	billing_version_seen,
     COUNT(DISTINCT website_session_id) AS sessions,
-    SUM(price_usd) / COUNT(DISTINCT website_session_id) 
-				AS revenue_per_billing_page_seen
+    SUM(price_usd) / COUNT(DISTINCT website_session_id) AS revenue_per_billing_page_seen
 FROM (
 	SELECT
 		website_pageviews.website_session_id, 
